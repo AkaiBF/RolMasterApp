@@ -19,7 +19,9 @@ export class HomePage implements OnInit {
     tags: string[] = []
     addingtag: boolean = false
     addingplayer: boolean = false
-    watchingPlayers:boolean = false
+    watchingPlayers: boolean = false
+    editingplayer: boolean = false
+    temp_string:string = ''
 
     statIndex:number = 0
 
@@ -29,39 +31,42 @@ export class HomePage implements OnInit {
 
     ngOnInit() {
         this.reloadDB()
-
-        this.activeMonster = {
-            name: 'Aboleth',
-            searchName: 'aboleth',
-            size: 'Large',
-            type: 'aberration',
-            alignment: 'Lawful evil',
-            img: "",
-            ac: 17,
-            hp: 135,
-            speed: '10 ft., swim 40 ft.',
-            str: 21,
-            dex: 9,
-            con: 15,
-            int: 18,
-            wis: 15,
-            cha: 10,
-            features: [],
-            actions: [],
-            savingThrows: [
-                "Wis +9",
-                "Cha +9"
-            ],
-            skills: [
-                "Insight +7",
-                "Perception +9"
-            ],
-            resistances: '',
-            conImmunities: '',
-            dmgImmunities: '',
-            senses: '',
-            languages: '',
-            cr: 10
+        if (localStorage.getItem('activeMonster')) {
+            this.activeMonster = JSON.parse(localStorage.getItem('activeMonster'))
+        } else {
+            this.activeMonster = {
+                name: 'Aboleth',
+                searchName: 'aboleth',
+                size: 'Large',
+                type: 'aberration',
+                alignment: 'Lawful evil',
+                img: "",
+                ac: 17,
+                hp: 135,
+                speed: '10 ft., swim 40 ft.',
+                str: 21,
+                dex: 9,
+                con: 15,
+                int: 18,
+                wis: 15,
+                cha: 10,
+                features: [],
+                actions: [],
+                savingThrows: [
+                    "Wis +9",
+                    "Cha +9"
+                ],
+                skills: [
+                    "Insight +7",
+                    "Perception +9"
+                ],
+                resistances: '',
+                conImmunities: '',
+                dmgImmunities: '',
+                senses: '',
+                languages: '',
+                cr: 10
+            }
         }
         /*this.activeMonster = {
             img: "https://vignette.wikia.nocookie.net/forgottenrealms/images/1/12/Deva-5e.jpg/revision/latest/scale-to-width-down/350?cb=20161119153420",
@@ -73,14 +78,9 @@ export class HomePage implements OnInit {
                 "Insight +7",
                 "Perception +9"
         }*/
-
-        this.tags.push("Passive Perception")
-        this.tags.push("Initiative")
-        this.players.push({ name: 'Germán', features: [17, 2] })
-        this.players.push({ name: 'Carlos', features: [12, 17] })
-        this.players.push({ name: 'Adrián', features: [15, 3] })
-        this.players.push({ name: 'Sebastián', features: [9, 18] })
-
+        localStorage.getItem('players') ? this.players = JSON.parse(localStorage.getItem('players')) : this.players = []
+        localStorage.getItem('tags') ? this.tags = JSON.parse(localStorage.getItem('tags')) : this.tags = []
+        localStorage.getItem('storedMonsters') ? this.storedMonsters = JSON.parse(localStorage.getItem('storedMonsters')) : this.storedMonsters = []
     }
 
     seeSong(event) {
@@ -179,4 +179,55 @@ export class HomePage implements OnInit {
             })
         }
     }
+
+    newTag() {
+        // Tenemos que captarlo por medio del ngModel
+        this.tags.push(this.temp_string)
+        for (let player of this.players) {
+            player.features.push(0)
+        }
+        this.addingtag = false
+        this.temp_string = ''
+    }
+
+    newPlayer() {
+        let features = []
+        for (let i of this.tags) {
+            features.push(0)
+        }
+        this.players.push({
+            name: this.temp_string,
+            features: features
+        })
+        this.addingplayer = false
+        this.temp_string = ''
+    }
+
+    removePlayer(player) {
+        this.players.splice(this.players.indexOf(player), 1)
+        this.watchingPlayers = false
+    }
+
+    removeTag() {
+        for (let player of this.players) {
+            player.features.splice(this.statIndex, 1)
+        }
+        this.tags.splice(this.statIndex, 1)
+        this.editingplayer = false
+        if (this.statIndex >= this.tags.length) {
+            this.statIndex--
+        }
+    }
+
+    save() {
+        localStorage.setItem('players', JSON.stringify(this.players))
+        localStorage.setItem('storedMonsters', JSON.stringify(this.storedMonsters))
+        localStorage.setItem('activeMonster', JSON.stringify(this.activeMonster))
+        localStorage.setItem('tags', JSON.stringify(this.tags))
+    }
+
+    clear() {
+        localStorage.clear()
+    }
+
 }
