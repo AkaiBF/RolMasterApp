@@ -94,11 +94,11 @@
                             <ion-input id="songUploader" type="file" accept="audio/*" (change)="seeSong($event)">
 
                             </ion-input>
-                            
+
                             <ion-button slot="end" (click)="addSong()">
                                 <ion-icon name="add"></ion-icon>
                             </ion-button>
-                            
+
                         </ion-item>
                         <ion-item>
                             <audio id="sound" controls class="block"></audio>
@@ -110,7 +110,7 @@
                                 <ion-icon name="play"></ion-icon>
                             </ion-button>
                         </ion-item>
-                    
+
                     </ion-list>
                 </ion-card>
                 <ion-card *ngIf="storedMonsters.length > 0">
@@ -127,6 +127,53 @@
                         </ion-item>
                     </ion-list>
                 </ion-card>
+
+                <ion-card *ngIf="watchingPlayers">
+                    <ion-card-header class="ta-right"><ion-button fill="clear" (click)="watchingPlayers = false"><ion-icon name="close"></ion-icon></ion-button></ion-card-header>
+                    <ion-card-content>
+                        <ion-list>
+                            <ion-item *ngFor="let player of players">
+                                <ion-icon name="person"></ion-icon>
+                                <ion-input [(ngModel)]="player.name"></ion-input>
+                                <ion-button color="dark" *ngFor="let feature of player.features; let i = index" (click)="statIndex = i"> {{ tags[i]}}: {{ feature }}</ion-button>
+                            </ion-item>
+                            <ion-item *ngIf="!addingtag">
+                                <ion-button color="dark" expand="block" class="block" (click)="addingtag = true">A&Ntilde;adir categor&iacute;a</ion-button>
+                            </ion-item>
+                            <ion-item *ngIf="addingtag">
+                                <ion-list>
+                                    <ion-item>
+                                        <ion-icon name="add"></ion-icon>
+                                        <ion-label>Nombre de categor&iacute;a: </ion-label>
+                                        <ion-input></ion-input>
+                                    </ion-item>
+                                    <ion-item><ion-button color="dark" expand="block" class="block">Guardar</ion-button></ion-item>
+                                </ion-list>
+                            </ion-item>
+                        </ion-list>
+                    </ion-card-content>
+                </ion-card>
+
+                <ion-card *ngIf="addingplayer">
+                    <ion-card-content>
+                        <ion-list>
+                            <ion-item>
+                                <ion-list>
+                                    <ion-item>
+                                        <ion-icon name="add"></ion-icon>
+                                        <ion-label>Nombre de jugador: </ion-label>
+                                        <ion-input></ion-input>
+                                    </ion-item>
+                                    <ion-item *ngFor="let j of tags">
+                                        <ion-label>{{ j }}</ion-label>
+                                        <ion-input inputmode="numeric" class="ta-right" type="number"></ion-input>
+                                    </ion-item>
+                                    <ion-item><ion-button expand="block" class="block">Guardar</ion-button></ion-item>
+                                </ion-list>
+                            </ion-item>
+                        </ion-list>
+                    </ion-card-content>
+                </ion-card>
             </ion-col>
         </ion-row>
     </ion-grid>
@@ -135,12 +182,12 @@
 </ion-content>
 <ion-footer no-shadow>
     <ion-toolbar position="bottom">
-        <button ion-button class="tabbutton" *ngFor="let player of players">
+        <button ion-button color="dark" class="tabbutton" *ngFor="let player of players" (click)="watchingPlayers = true"> 
             <div class="little top">{{ player.name }}</div>
-            {{ player.passivePerception }}
+            {{ player.features[statIndex] }}
         </button>
-        <button ion-button class="tabbutton">
-            <ion-icon name="add" (click)="addPlayer()"></ion-icon>
+        <button ion-button class="tabbutton" (click)="addingplayer = true">
+            <ion-icon name="add"></ion-icon>
         </button>
     </ion-toolbar>
 </ion-footer>

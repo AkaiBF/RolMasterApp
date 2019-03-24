@@ -16,6 +16,12 @@ export class HomePage implements OnInit {
     lastSong: any
     searchList: any[] = []
     bestiary: any[] = []
+    tags: string[] = []
+    addingtag: boolean = false
+    addingplayer: boolean = false
+    watchingPlayers:boolean = false
+
+    statIndex:number = 0
 
     constructor(private ms: MonstersService) {
         
@@ -68,10 +74,12 @@ export class HomePage implements OnInit {
                 "Perception +9"
         }*/
 
-        this.players.push({ name:'Germán', passivePerception: 17 })
-        this.players.push({ name: 'Carlos', passivePerception: 12 })
-        this.players.push({ name: 'Adrián', passivePerception: 15 })
-        this.players.push({ name: 'Sebastián', passivePerception: 9 })
+        this.tags.push("Passive Perception")
+        this.tags.push("Initiative")
+        this.players.push({ name: 'Germán', features: [17, 2] })
+        this.players.push({ name: 'Carlos', features: [12, 17] })
+        this.players.push({ name: 'Adrián', features: [15, 3] })
+        this.players.push({ name: 'Sebastián', features: [9, 18] })
 
     }
 
